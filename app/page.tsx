@@ -1,5 +1,7 @@
+"use client";
 import Image from "next/image";
 import { EB_Garamond } from "next/font/google";
+import CheckoutButton from "../pages/checkoutButton";
 
 // If loading a variable font, you don't need to specify the font weight
 const mainFont = EB_Garamond({ subsets: ["latin"], weight: "400" });
@@ -19,7 +21,7 @@ export default function Home() {
         />
       </h2>
       <div className="flex flex-col">
-        <div className="flex space-x-7 justify-center m-4">$149</div>
+        <div className="flex space-x-7 justify-center m-4">$69</div>
         <div className="flex space-x-7 justify-center ">
           <div>S</div>
           <div>M</div>
@@ -27,6 +29,7 @@ export default function Home() {
           <div>XL</div>
         </div>
       </div>
+      <CheckoutButton />
     </main>
   );
 }
