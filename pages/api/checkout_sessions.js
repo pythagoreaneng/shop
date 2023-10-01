@@ -3,12 +3,13 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 export default async function handler(req, res) {
   if (req.method === "POST") {
     try {
+      const size = req.query.size || "Medium";
+      const priceId = getPriceIdBySize(size);
       // Create Checkout Sessions from body params.
       const session = await stripe.checkout.sessions.create({
         line_items: [
           {
-            // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-            price: "price_1NswjzJj2art1ipkfAfUH5kb",
+            price: priceId,
             quantity: 1,
           },
         ],
@@ -24,4 +25,16 @@ export default async function handler(req, res) {
     res.setHeader("Allow", "POST");
     res.status(405).end("Method Not Allowed");
   }
+}
+
+function getPriceIdBySize(size) {
+  // Define a mapping of size to price ID or product ID
+  const sizeToPriceId = {
+    Small: "price_1NwWHyJj2art1ipkwbcVHR0u", // Replace with your actual price IDs
+    Medium: "price_1NswjzJj2art1ipkfAfUH5kb",
+    Large: "price_1NwWKYJj2art1ipkqiEm1isb",
+    XLarge: "price_1NwWLnJj2art1ipknxU5cuLy",
+  };
+
+  return sizeToPriceId[size];
 }

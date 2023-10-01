@@ -1,16 +1,20 @@
 "use client";
+
+import React, { useState } from "react";
 import Image from "next/image";
-import { EB_Garamond } from "next/font/google";
 import CheckoutButton from "../pages/checkoutButton";
 
-// If loading a variable font, you don't need to specify the font weight
-const mainFont = EB_Garamond({ subsets: ["latin"], weight: "400" });
+const availableSizes = ["Small", "Medium", "Large", "XLarge"];
 
 export default function Home() {
+  const [selectedSize, setSelectedSize] = useState("Small"); // State to keep track of the selected size
+
+  const handleSizeClick = (size: string) => {
+    setSelectedSize(size);
+  };
+
   return (
-    <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 ${mainFont.className}`}
-    >
+    <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <header className="text-4xl m-10">Pythagorean</header>
       <h2 className="h-screen">
         <Image
@@ -23,13 +27,20 @@ export default function Home() {
       <div className="flex flex-col">
         <div className="flex space-x-7 justify-center m-4">$69</div>
         <div className="flex space-x-7 justify-center ">
-          <div>S</div>
-          <div>M</div>
-          <div>L</div>
-          <div>XL</div>
+          {availableSizes.map((size) => (
+            <span
+              key={size}
+              onClick={() => handleSizeClick(size)}
+              className={`${
+                selectedSize === size ? "underline" : ""
+              } cursor-pointer`}
+            >
+              {size}
+            </span>
+          ))}
         </div>
       </div>
-      <CheckoutButton />
+      <CheckoutButton selectedSize={selectedSize} />
     </main>
   );
 }
