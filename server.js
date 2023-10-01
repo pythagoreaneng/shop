@@ -23,20 +23,23 @@ AWS.config.update({
 
 app.get("/api/product-quantity", async (req, res) => {
   const dynamoDB = new DynamoDB();
+  const selectedSize = req.query.size || "Medium"; // Default to "M" if no size is provided
   const params = {
     TableName: "testDB",
-    Key: {
-      product_id: { S: "1" },
+    FilterExpression: "product_size = :size",
+    ExpressionAttributeValues: {
+      ":size": { S: selectedSize },
     },
   };
 
   try {
-    dynamoDB.getItem(params, (err, data) => {
+    dynamoDB.scan(params, (err, data) => {
       if (err) {
-        console.error("Error retrieving item:", err);
-        res.status(500).json({ error: "Error retrieving item" });
+        console.error("Error scanning table:", err);
+        res.status(500).json({ error: "Error scanning table" });
       } else {
-        const quantity = data.Item?.product_quantity?.N;
+        // Assuming there is only one item with the selected size
+        const quantity = data.Items[0]?.product_quantity?.N;
         console.log(quantity);
         res.json({ productQuantity: quantity });
       }
