@@ -21,7 +21,7 @@ AWS.config.update({
   region: awsRegion,
 });
 
-app.get("/api/product-quantity", async (req, res) => {
+app.get("/backened/product-quantity", async (req, res) => {
   const dynamoDB = new DynamoDB();
   const selectedSize = req.query.size || "Medium"; // Default to "M" if no size is provided
   const params = {

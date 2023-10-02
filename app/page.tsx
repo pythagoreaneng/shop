@@ -3,7 +3,9 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import CheckoutButton from "../pages/checkoutButton";
+import { EB_Garamond } from "next/font/google";
 
+const mainFont = EB_Garamond({ subsets: ["latin"], weight: "400" });
 const availableSizes = ["Small", "Medium", "Large", "XLarge"];
 
 export default function Home() {
@@ -14,7 +16,9 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <main
+      className={`flex min-h-screen flex-col items-center justify-between p-24 ${mainFont.className}`}
+    >
       <header className="text-4xl m-10">Pythagorean</header>
       <h2 className="h-screen">
         <Image
