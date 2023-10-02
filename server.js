@@ -38,10 +38,12 @@ app.get("/backened/product-quantity", async (req, res) => {
         console.error("Error scanning table:", err);
         res.status(500).json({ error: "Error scanning table" });
       } else {
+        console.log("test", data.Items[0]?.product_price?.N);
         // Assuming there is only one item with the selected size
         const quantity = data.Items[0]?.product_quantity?.N;
+        const price = data.Items[0]?.product_price?.N;
         console.log(quantity);
-        res.json({ productQuantity: quantity });
+        res.json({ productQuantity: quantity, productPrice: price });
       }
     });
   } catch (err) {

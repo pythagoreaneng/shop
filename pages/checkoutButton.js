@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-export default function CheckoutButton({ selectedSize }) {
+export default function CheckoutButton({ selectedSize, setProductPrice }) {
   const [productQuantity, setProductQuantity] = useState(null);
 
   useEffect(() => {
@@ -11,6 +11,7 @@ export default function CheckoutButton({ selectedSize }) {
       .then((response) => response.json())
       .then((data) => {
         setProductQuantity(data.productQuantity);
+        setProductPrice(data.productPrice);
       })
       .catch((error) => {
         console.error("Error fetching product quantity:", error);

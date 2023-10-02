@@ -10,6 +10,7 @@ const availableSizes = ["Small", "Medium", "Large", "XLarge"];
 
 export default function Home() {
   const [selectedSize, setSelectedSize] = useState("Small"); // State to keep track of the selected size
+  const [productPrice, setProductPrice] = useState(null);
 
   const handleSizeClick = (size: string) => {
     setSelectedSize(size);
@@ -29,7 +30,7 @@ export default function Home() {
         />
       </h2>
       <div className="flex flex-col">
-        <div className="flex space-x-7 justify-center m-4">$69</div>
+        <div className="flex space-x-7 justify-center m-4">${productPrice}</div>
         <div className="flex space-x-7 justify-center ">
           {availableSizes.map((size) => (
             <span
@@ -44,7 +45,10 @@ export default function Home() {
           ))}
         </div>
       </div>
-      <CheckoutButton selectedSize={selectedSize} />
+      <CheckoutButton
+        selectedSize={selectedSize}
+        setProductPrice={setProductPrice}
+      />
     </main>
   );
 }
