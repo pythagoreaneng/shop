@@ -1,23 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-export default function CheckoutButton({ selectedSize, setProductPrice }) {
-  const [productQuantity, setProductQuantity] = useState(null);
-
-  useEffect(() => {
-    // Fetch the product quantity from your Express.js server
-    fetch(
-      `http://localhost:3001/backened/product-quantity?size=${selectedSize}`
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        setProductQuantity(data.productQuantity);
-        setProductPrice(data.productPrice);
-      })
-      .catch((error) => {
-        console.error("Error fetching product quantity:", error);
-      });
-  }, [, selectedSize]);
-
+export default function CheckoutButton({ selectedSize, productQuantity }) {
   return (
     <form action={`/api/checkout_sessions?size=${selectedSize}`} method="POST">
       <p>Quantity: {productQuantity}</p>
