@@ -24,7 +24,6 @@ export default function Home() {
 
         if (data.productQuantity > 0) {
           setOutOfStock(false);
-          console.log("out of stock");
         } else {
           setOutOfStock(true);
         }
@@ -40,10 +39,10 @@ export default function Home() {
 
   return (
     <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 ${mainFont.className}`}
+      className={`flex min-h-screen flex-col items-center justify-between ${mainFont.className}`}
     >
-      <header className="text-4xl m-10">Pythagorean</header>
-      <h2 className="h-screen">
+      <header className="text-4xl mt-6">PYTHAGOREAN</header>
+      <h2 className="">
         <Image
           src="/product.png"
           width={500}
@@ -68,13 +67,10 @@ export default function Home() {
             </span>
           ))}
         </div>
+        <div className="flex justify-center p-6" style={{ minHeight: "100px" }}>
+          {!outOfStock && <CheckoutButton selectedSize={selectedSize} />}
+        </div>
       </div>
-      {!outOfStock && (
-        <CheckoutButton
-          selectedSize={selectedSize}
-          productQuantity={productQuantity}
-        />
-      )}
     </main>
   );
 }

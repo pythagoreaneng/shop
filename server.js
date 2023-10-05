@@ -7,14 +7,13 @@ const awsKeyId = process.env.AWS_ACCESS_KEY_ID;
 const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
 const awsRegion = process.env.AWS_REGION;
 
-const AWS = require("aws-sdk");
-
 const app = express();
 const port = 3001;
-app.use(express.json());
 
+app.use(express.json());
 app.use(cors());
 
+const AWS = require("aws-sdk");
 AWS.config.update({
   accessKeyId: awsKeyId,
   secretAccessKey: secretAccessKey,
@@ -24,31 +23,103 @@ AWS.config.update({
 app.get("/backend/product-quantity", async (req, res) => {
   const dynamoDB = new DynamoDB();
   const selectedSize = req.query.size || "Medium"; // Default to "M" if no size is provided
-  const params = {
-    TableName: "testDB",
-    FilterExpression: "product_size = :size",
-    ExpressionAttributeValues: {
-      ":size": { S: selectedSize },
+  const getParams = {
+    TableName: "shopDB",
+    Key: {
+      product_category: { S: "Shirt" },
+      product_size: { S: selectedSize },
     },
   };
 
   try {
-    dynamoDB.scan(params, (err, data) => {
+    dynamoDB.getItem(getParams, (err, data) => {
       if (err) {
-        console.error("Error scanning table:", err);
-        res.status(500).json({ error: "Error scanning table" });
+        console.error("Error getting item:", err);
       } else {
-        console.log("test", data.Items[0]?.product_price?.N);
-        // Assuming there is only one item with the selected size
-        const quantity = data.Items[0]?.product_quantity?.N;
-        const price = data.Items[0]?.product_price?.N;
-        console.log(quantity);
+        const quantity = parseInt(data.Item.product_quantity.S, 10);
+        const price = parseInt(data.Item.product_price.S, 10);
+        console.log("TEST", quantity);
         res.json({ productQuantity: quantity, productPrice: price });
       }
     });
   } catch (err) {
     console.error("Error:", err);
     res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+
+app.get("/backend/order/success", async (req, res) => {
+  try {
+    const session_id = req.query.session_id;
+
+    // Retrieve the session details from Stripe
+    const session = await stripe.checkout.sessions.retrieve(session_id);
+
+    // Extract the selected size from the session metadata (assuming you've set it during session creation)
+    const selectedSize = session.metadata.size;
+    const stripe_product_id = session.metadata.price;
+    const decrementValue = 1;
+
+    console.log(stripe_product_id);
+
+    // Decrement the quantity in DynamoDB
+    const dynamoDB = new DynamoDB();
+
+    // Step 1: Retrieve the current string value of product_quantity
+    const getParams = {
+      TableName: "shopDB",
+      Key: {
+        product_category: { S: "Shirt" },
+        product_size: { S: selectedSize },
+      },
+    };
+
+    dynamoDB.getItem(getParams, (err, data) => {
+      if (err) {
+        console.error("Error getting item:", err);
+      } else {
+        // Step 2: Parse the string into a numeric value
+        const currentQuantity = parseInt(data.Item.product_quantity.S, 10);
+
+        if (currentQuantity < 1) {
+          console.error("Sold Out: Current quantity is less than 1.");
+          throw new Error("Sold Out: Current quantity is less than 1.");
+        }
+
+        // Step 3: Subtract 1 from the numeric value
+        const newQuantity = currentQuantity - decrementValue;
+
+        // Step 4: Update the product_quantity attribute as a string
+        const updateParams = {
+          TableName: "shopDB",
+          Key: {
+            product_category: { S: "Shirt" },
+            product_size: { S: selectedSize },
+          },
+          UpdateExpression: "SET product_quantity = :newQuantity",
+          ExpressionAttributeValues: {
+            ":newQuantity": { S: newQuantity.toString() },
+          },
+        };
+
+        dynamoDB.updateItem(updateParams, (err, data) => {
+          if (err) {
+            console.error("Error updating item:", err);
+          } else {
+            console.log("Item updated successfully!");
+            res.send(
+              `<html><body><h1>Thanks for your order!</h1></body></html>`
+            );
+          }
+        });
+      }
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+    res.send(`<html><body><h1>something went wrong</h1></body></html>`);
   }
 });
 
