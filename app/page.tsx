@@ -16,7 +16,9 @@ export default function Home() {
 
   useEffect(() => {
     // Fetch the product quantity from your Express.js server
-    fetch(`http://localhost:3001/backend/product-quantity?size=${selectedSize}`)
+    fetch(
+      `http://localhost:3001/collections/dwytib/shirts/quantity?size=${selectedSize}`
+    )
       .then((response) => response.json())
       .then((data) => {
         setProductQuantity(data.productQuantity);
