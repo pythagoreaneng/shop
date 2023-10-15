@@ -20,7 +20,7 @@ AWS.config.update({
   region: awsRegion,
 });
 
-app.get("/collections/dwytib/shirts/quantity", async (req, res) => {
+app.get("/backend/quantity", async (req, res) => {
   const dynamoDB = new DynamoDB();
   const selectedSize = req.query.size || "Medium"; // Default to "M" if no size is provided
   const getParams = {
@@ -50,7 +50,7 @@ app.get("/collections/dwytib/shirts/quantity", async (req, res) => {
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
-app.get("/collections/dwytib/shirts/order/success", async (req, res) => {
+app.get("/backend/order/success", async (req, res) => {
   try {
     const session_id = req.query.session_id;
 
@@ -111,7 +111,7 @@ app.get("/collections/dwytib/shirts/order/success", async (req, res) => {
             console.log("Item updated successfully!");
             res.redirect(
               303,
-              "http://localhost:3001/collections/dwytib/shirts/order/success/page"
+              "http://localhost:3000/orderStatus?status=success"
             );
           }
         });
@@ -120,11 +120,11 @@ app.get("/collections/dwytib/shirts/order/success", async (req, res) => {
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ error: "Internal server error" });
-    res.send(`<html><body><h1>something went wrong</h1></body></html>`);
+    res.redirect(303, "http://localhost:3000/orderStatus?status=failed");
   }
 });
 
-app.get("/collections/dwytib/shirts/order/success/page", async (req, res) => {
+app.get("/backend/order/success/page", async (req, res) => {
   res.send(`<html><body><h1>Thanks for your order!</h1></body></html>`);
 });
 

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import CheckoutButton from "../pages/checkoutButton";
+import CheckoutButton from "../components/checkoutButton";
 import { EB_Garamond } from "next/font/google";
 
 const mainFont = EB_Garamond({ subsets: ["latin"], weight: "400" });
@@ -16,9 +16,7 @@ export default function Home() {
 
   useEffect(() => {
     // Fetch the product quantity from your Express.js server
-    fetch(
-      `http://localhost:3001/collections/dwytib/shirts/quantity?size=${selectedSize}`
-    )
+    fetch(`http://localhost:3001/backend/quantity?size=${selectedSize}`)
       .then((response) => response.json())
       .then((data) => {
         setProductQuantity(data.productQuantity);

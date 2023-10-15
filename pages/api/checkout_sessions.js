@@ -18,7 +18,7 @@ export default async function handler(req, res) {
           },
         ],
         mode: "payment",
-        success_url: `${req.headers.origin}/collections/dwytib/shirts/order/success?session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `http://localhost:3001/backend/order/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${req.headers.origin}/?canceled=true`,
         metadata: metadata,
       });
