@@ -51,6 +51,12 @@ export default function Home() {
         />
       </h2>
       <div className="flex flex-col">
+        <div className="text-center text-gray-500">
+          <p>100% HEAVY WEIGHT COTTON.</p>
+          <p>DESIGNED IN LOS ANGELES.</p>
+          <p>MADE IN USA.</p> <p>11.5oz</p>
+          <p>285 GSM</p> <p>PRESHRUNK (0-3%)</p>
+        </div>
         <div className="flex space-x-7 justify-center m-4">
           {outOfStock ? "Sold Out." : `$${productPrice}`}
         </div>
