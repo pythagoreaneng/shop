@@ -5,6 +5,10 @@ export default async function handler(req, res) {
     try {
       const size = req.query.size || "Medium";
       const priceId = getPriceIdBySize(size);
+      const metadata = {
+        size: size,
+        priceId: priceId,
+      };
       // Create Checkout Sessions from body params.
       const session = await stripe.checkout.sessions.create({
         line_items: [
@@ -14,8 +18,9 @@ export default async function handler(req, res) {
           },
         ],
         mode: "payment",
-        success_url: `${req.headers.origin}/?success=true`,
+        success_url: `http://localhost:3001/backend/order/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${req.headers.origin}/?canceled=true`,
+        metadata: metadata,
       });
       res.redirect(303, session.url);
     } catch (err) {
@@ -28,12 +33,11 @@ export default async function handler(req, res) {
 }
 
 function getPriceIdBySize(size) {
-  // Define a mapping of size to price ID or product ID
   const sizeToPriceId = {
-    Small: "price_1NwWHyJj2art1ipkwbcVHR0u", // Replace with your actual price IDs
+    Small: "price_1O2MlCJj2art1ipkROXhSqGZ",
     Medium: "price_1NswjzJj2art1ipkfAfUH5kb",
-    Large: "price_1NwWKYJj2art1ipkqiEm1isb",
-    XLarge: "price_1NwWLnJj2art1ipknxU5cuLy",
+    Large: "price_1O2MkdJj2art1ipkyxTuaqjz",
+    XLarge: "price_1Nz5LIJj2art1ipkzPCIB0dd",
   };
 
   return sizeToPriceId[size];
